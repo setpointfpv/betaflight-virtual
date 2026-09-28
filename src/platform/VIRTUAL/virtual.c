@@ -44,7 +44,6 @@
 #include "drivers/motor_impl.h"
 #include "drivers/pwm_output.h"
 #include "drivers/pwm_output_impl.h"
-#include "drivers/servo_impl.h"
 #include "drivers/sound_beeper.h"
 #include "drivers/system.h"
 #include "drivers/time.h"
@@ -517,7 +516,7 @@ void servoDevInit(const servoDevConfig_t *servoConfig)
     UNUSED(servoConfig);
 }
 
-void servoWrite(uint8_t index, float value)
+void pwmWriteServo(uint8_t index, float value)
 {
     UNUSED(index);
     UNUSED(value);
