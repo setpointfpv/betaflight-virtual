@@ -836,6 +836,14 @@ FAST_CODE void scheduler(void)
         }
     }
 
+#if defined(USE_SCHEDULER_IDLE_HOOK)
+    if (!selectedTask) {
+        // Nothing is due before the next gyro cycle. A platform whose time is
+        // supplied from outside, such as an emulated board, sleeps until then.
+        schedulerIdle(gyroEnabled ? nextTargetCycles : getCycleCounter() + desiredPeriodCycles);
+    }
+#endif
+
 #if defined(UNIT_TEST)
     readSchedulerLocals(selectedTask, selectedTaskDynamicPriority);
     UNUSED(taskExecutionTimeUs);
