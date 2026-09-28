@@ -13,7 +13,8 @@ INCLUDE_DIRS := \
 MCU_COMMON_SRC  := \
         VIRTUAL/startup_virtual.c \
         VIRTUAL/virtual.c \
-        VIRTUAL/serial_virtual.c
+        VIRTUAL/serial_virtual.c \
+        VIRTUAL/blackbox_mailbox.c
 
 ARCH_FLAGS      = -mthumb -mcpu=cortex-m4 -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16
 DEVICE_FLAGS    = -DVIRTUAL_BOARD

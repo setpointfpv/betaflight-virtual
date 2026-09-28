@@ -21,8 +21,8 @@
 
 #pragma once
 
-#if defined(USE_BLACKBOX_VIRTUAL) && !defined(SIMULATOR_BUILD)
-#error "USE_BLACKBOX_VIRTUAL valid for SITL build only"
+#if defined(USE_BLACKBOX_VIRTUAL) && !defined(SIMULATOR_BUILD) && !defined(VIRTUAL_BOARD)
+#error "USE_BLACKBOX_VIRTUAL valid for SITL and the virtual board only"
 #endif
 
 bool blackboxVirtualOpen(void);
