@@ -58,6 +58,11 @@
 #define USE_GYRO
 #define USE_VIRTUAL_GYRO
 #define USE_ACC
+
+// The frequency sweep a pilot flies to measure the quad. It is a build option
+// (the cloud build's CHIRP), so the board has it for any log that used it; it
+// does nothing unless the CHIRP mode is switched on.
+#define USE_CHIRP
 #define USE_VIRTUAL_ACC
 #define VIRTUAL_GYRO_SAMPLE_RATE_HZ 8000
 
