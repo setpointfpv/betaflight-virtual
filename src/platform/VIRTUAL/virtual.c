@@ -361,8 +361,34 @@ static uint16_t analogConvertToExternal(float motorValue)
 FAST_DATA_ZERO_INIT bool useDshotTelemetry = false;
 FAST_DATA_ZERO_INIT dshotTelemetryCycleCounters_t dshotDMAHandlerCycleCounters;
 
-// Bidirectional DShot telemetry (the RPM filter's input) comes later, from
-// MBX_ERPM_BASE.
+// Bidirectional DShot: the host supplies each motor's speed, which is encoded
+// as an ESC would send it (electrical period in microseconds, 3-bit exponent
+// and 9-bit mantissa) so the firmware's own decoder sees the same resolution.
+static uint16_t encodeErpmTelemetry(uint32_t erpm100)
+{
+    if (erpm100 == 0) {
+        return 0x0fff;
+    }
+    uint32_t period = (1000000 * 60 / 100 + erpm100 / 2) / erpm100;
+    if (period == 0) {
+        period = 1;
+    }
+    unsigned exponent = 0;
+    while ((period >> exponent) > 0x1ff && exponent < 7) {
+        exponent++;
+    }
+    return (uint16_t)((exponent << 9) | ((period >> exponent) & 0x1ff));
+}
+
+static bool virtualDecodeTelemetry(void)
+{
+    for (unsigned i = 0; i < dshotMotorCount && i < 8; i++) {
+        dshotTelemetryState.motorState[i].rawValue = encodeErpmTelemetry(MBX_REG(MBX_ERPM_BASE + 4 * i));
+    }
+    dshotTelemetryState.rawValueState = DSHOT_RAW_VALUE_STATE_NOT_PROCESSED;
+    return true;
+}
+
 static const motorVTable_t dshotVTable = {
     .postInit = motorPostInitNull,
     .convertExternalToMotor = dshotConvertFromExternal,
@@ -370,7 +396,7 @@ static const motorVTable_t dshotVTable = {
     .enable = virtualMotorEnable,
     .disable = virtualMotorDisable,
     .isMotorEnabled = virtualMotorIsEnabled,
-    .decodeTelemetry = motorDecodeTelemetryNull,
+    .decodeTelemetry = virtualDecodeTelemetry,
     .write = virtualMotorWrite,
     .writeInt = virtualMotorWriteInt,
     .updateComplete = virtualMotorUpdateComplete,
