@@ -23,8 +23,15 @@ STARTUP_SRC     =
 
 MCU_FLASH_SIZE  := 2048
 
+# target.mk sets SIMULATOR_BUILD for its hardware-free source list, but up to
+# 2025.12 the define it adds also switches SITL behaviour on in the flight
+# code (attitude from the simulator, TCP serial). The virtual board runs the
+# flight code as hardware does, so the define is dropped.
+CFLAGS_DISABLED += -DSIMULATOR_BUILD
+
 MCU_EXCLUDES = \
         drivers/accgyro/accgyro_virtual.c \
+        fc/hardfaults.c \
         drivers/serial_tcp.c \
         drivers/display_ug2864hsweg01.c \
         io/displayport_oled.c

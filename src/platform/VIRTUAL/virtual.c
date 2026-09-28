@@ -29,6 +29,8 @@
 
 #include "platform.h"
 
+#include "build/build_config.h"
+
 #include "common/axis.h"
 #include "common/maths.h"
 #include "common/utils.h"
@@ -50,6 +52,7 @@
 
 #include "pg/motor.h"
 #include "rx/rx.h"
+#include "rx/msp.h"
 #include "scheduler/scheduler.h"
 
 #include "virtual_mailbox.h"
@@ -212,7 +215,9 @@ static void pollRc(void)
     for (unsigned i = 0; i < count; i++) {
         channels[i] = (uint16_t)MBX_REG(MBX_RC_BASE + 4 * i);
     }
-    rxUpdateUdpChannels(channels, (uint8_t)count);
+    // 2025.12 has no UDP receiver for the board to feed, so the frame goes in
+    // as an MSP RC frame would: one complete frame per host frame.
+    rxMspFrameReceive(channels, (int)count);
 }
 
 // --- Gyro and accelerometer: the sample the host posted for this time
@@ -534,4 +539,12 @@ bool usbCableIsInserted(void)
 bool usbCableIsActive(void)
 {
     return true;
+}
+
+// 2025.12 asks the platform what MCU it is for the status and MSP replies.
+// There is no type for this board; it reports as the simulator does.
+const mcuTypeInfo_t *getMcuTypeInfo(void)
+{
+    static const mcuTypeInfo_t info = { .id = MCU_TYPE_SIMULATOR, .name = "VIRTUAL_M4" };
+    return &info;
 }
