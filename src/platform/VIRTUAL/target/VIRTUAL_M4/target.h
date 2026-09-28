@@ -135,7 +135,10 @@
 #undef USE_SOFTSERIAL
 #undef USE_FLASH
 #undef USE_SDCARD
-#undef USE_BLACKBOX
+
+// Blackbox goes to the host as a byte stream, one log per arm.
+#define USE_BLACKBOX
+#define USE_BLACKBOX_VIRTUAL
 
 
 // No real sensors, flash chips, pins or OSD.

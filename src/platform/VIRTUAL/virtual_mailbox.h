@@ -66,11 +66,14 @@
 #define MBX_MOTOR_SEQ           0x0C4   // WO  incremented after each motor update
 #define MBX_MOTOR_BASE          0x0D0   // WO  8 float32 motor outputs, as written to the driver
 
-#define MBX_ERPM_BASE           0x100   // RO  8 motor speeds, eRPM
+#define MBX_ERPM_BASE           0x100   // RO  8 motor speeds, eRPM / 100 as DShot telemetry reports
 
 #define MBX_SERIAL_RX_COUNT     0x140   // RO  bytes waiting from the host
 #define MBX_SERIAL_RX_DATA      0x144   // RO  reading pops one byte
 #define MBX_SERIAL_TX_DATA      0x148   // WO  writing sends one byte to the host
+
+#define MBX_BLACKBOX_DATA       0x150   // WO  one byte of blackbox log
+#define MBX_BLACKBOX_CONTROL    0x154   // WO  1 begins a log, 2 ends it
 
 #define MBX_SIZE                0x1000
 
