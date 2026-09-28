@@ -43,11 +43,8 @@
 
 typedef void* ADC_TypeDef;
 
+// drivers/nvic.h builds priorities from the grouping, as on an F4.
 #define NVIC_PriorityGroup_2 0x500
-#define NVIC_PRIORITY_GROUPING NVIC_PriorityGroup_2
-#define NVIC_BUILD_PRIORITY(base,sub) (((((base)<<(4-(7-(NVIC_PRIORITY_GROUPING>>8))))|((sub)&(0x0f>>(7-(NVIC_PRIORITY_GROUPING>>8)))))<<4)&0xf0)
-#define NVIC_PRIORITY_BASE(prio) (((prio)>>(4-(7-(NVIC_PRIORITY_GROUPING>>8))))>>4)
-#define NVIC_PRIORITY_SUB(prio) (((prio)>>4)&(0x0f>>(7-(NVIC_PRIORITY_GROUPING>>8))))
 
 // Kept across a reset, like backup RAM: holds the config storage.
 #define PERSISTENT          __attribute__ ((section(".persistent_data"), aligned(4)))

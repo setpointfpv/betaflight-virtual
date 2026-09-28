@@ -64,6 +64,8 @@
 #undef USE_MAG
 #undef USE_BARO
 #undef USE_GPS
+#undef USE_GPS_RESCUE
+#undef USE_POSITION_HOLD
 #undef USE_RANGEFINDER
 
 // Motor outputs go to the mailbox whatever the protocol; DShot keeps the
@@ -73,7 +75,7 @@
 #define USABLE_TIMER_CHANNEL_COUNT 0
 
 // Stick input arrives as whole RC frames posted by the host.
-#define ENABLE_RX_UDP           1
+#define DEFAULT_RX_FEATURE      FEATURE_RX_MSP
 
 // MSP and the CLI over one byte stream, presented as the USB VCP.
 #define USE_VCP
@@ -206,6 +208,31 @@ typedef enum
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 typedef enum {TEST_IRQ = 0 } IRQn_Type;
+typedef enum {
+    EXTI_Trigger_Rising = 0x08,
+    EXTI_Trigger_Falling = 0x0C,
+    EXTI_Trigger_Rising_Falling = 0x10
+} EXTITrigger_TypeDef;
+
+// Up to 2025.12 the drivers name the hardware by these types; the virtual
+// board has none of it, so they are placeholders, as for SITL.
+typedef struct
+{
+  uint32_t IDR;
+  uint32_t ODR;
+  uint32_t BSRR;
+  uint32_t BRR;
+} GPIO_TypeDef;
+
+#define GPIOA_BASE ((intptr_t)0x0001)
+
+typedef struct {
+    void* test;
+} TIM_TypeDef;
+
+typedef struct {
+    void* test;
+} TIM_OCInitTypeDef;
 
 typedef struct {
     void* test;
@@ -219,8 +246,15 @@ typedef struct {
     void* test;
 } DMA_InitTypeDef;
 
-struct spiResource_s;
-struct quadSpiResource_s;
-struct octoSpiResource_s;
-struct i2cResource_s;
+typedef struct {
+    void* test;
+} SPI_TypeDef;
+
+typedef struct {
+    void* test;
+} USART_TypeDef;
+
+typedef struct {
+    void* test;
+} I2C_TypeDef;
 #define USE_SCHEDULER_IDLE_HOOK
