@@ -37,6 +37,13 @@ jobs:
       - name: Toolchain
         run: make arm_sdk_install
 
+      # 2025.12's make won't start without Betaflight's board-config
+      # repository in src/config, though a TARGET build like this one reads
+      # none of it; 2026.6 only asks when a CONFIG is built. An empty
+      # directory is all the check looks for.
+      - name: Board configs
+        run: mkdir -p src/config/configs
+
       - name: Build
         run: make VIRTUAL_M4
 
