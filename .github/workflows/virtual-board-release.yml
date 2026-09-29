@@ -1,0 +1,75 @@
+# Builds one virtual board tag and puts the image in a draft release.
+#
+# The virtual board runs Betaflight inside Setpoint's emulator, so Setpoint
+# can fly a flight's own release. Each build comes from a `<release>-virtual.<n>`
+# tag, which is its exact source; GitHub attaches that source to the release.
+#
+# The release stays a draft. The maintainer checks the image, signs it with a
+# key that never comes near this repository, uploads the signature and
+# publishes: Setpoint runs only images carrying that signature.
+name: Virtual board release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build, e.g. 2025.12.5-virtual.2"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check the tag's name
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          [[ "$TAG" =~ ^[0-9]{4}\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)*-virtual(\.[0-9]+)?$ ]] \
+            || { echo "::error::$TAG isn't a <release>-virtual.<n> tag"; exit 1; }
+
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+
+      - name: Toolchain
+        run: make arm_sdk_install
+
+      - name: Build
+        run: make VIRTUAL_M4
+
+      - name: Image
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          release="${TAG%-virtual*}"
+          image="betaflight-${release}-virtual.bin"
+          objcopy=$(ls tools/*/bin/arm-none-eabi-objcopy | head -1)
+          "$objcopy" -O binary obj/main/betaflight_VIRTUAL_M4.elf "$image"
+          sha256sum "$image" > "$image.sha256"
+          echo "IMAGE=$image" >> "$GITHUB_ENV"
+          echo "RELEASE=$release" >> "$GITHUB_ENV"
+
+      - name: Draft release
+        env:
+          TAG: ${{ inputs.tag }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<EOF
+          Betaflight $RELEASE built for Setpoint's virtual board, from the tag \`$TAG\`.
+
+          This isn't for flashing a flight controller. Setpoint downloads it to run the
+          flight's own Betaflight release in its emulator, and runs it only with the
+          maintainer's signature (\`$IMAGE.sig\`).
+
+          Built by [this workflow run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
+          with Betaflight's own toolchain (\`make arm_sdk_install\`, \`make VIRTUAL_M4\`).
+          Betaflight is GPL-3.0; the source for this build is the tag, attached below as
+          Source code.
+          EOF
+          gh release create "$TAG" "$IMAGE" "$IMAGE.sha256" \
+            --draft --verify-tag \
+            --title "Betaflight $RELEASE (virtual board)" \
+            --notes-file notes.md
