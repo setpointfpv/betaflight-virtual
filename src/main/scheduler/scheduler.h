@@ -241,6 +241,10 @@ void schedulerSetNextStateTime(timeDelta_t nextStateTime);
 timeDelta_t schedulerGetNextStateTime(void);
 void schedulerInit(void);
 void scheduler(void);
+#if defined(USE_SCHEDULER_IDLE_HOOK)
+// Called when no task is due before `untilCycles` (a getCycleCounter() value).
+void schedulerIdle(uint32_t untilCycles);
+#endif
 timeUs_t schedulerExecuteTask(task_t *selectedTask, timeUs_t currentTimeUs);
 void taskSystemLoad(timeUs_t currentTimeUs);
 uint32_t getCpuPercentageLate(void);

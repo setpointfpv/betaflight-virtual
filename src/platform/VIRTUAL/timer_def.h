@@ -20,16 +20,3 @@
  */
 
 #pragma once
-
-#if defined(USE_BLACKBOX_VIRTUAL) && !defined(SIMULATOR_BUILD) && !defined(VIRTUAL_BOARD)
-#error "USE_BLACKBOX_VIRTUAL valid for SITL and the virtual board only"
-#endif
-
-bool blackboxVirtualOpen(void);
-void blackboxVirtualPutChar(uint8_t value);
-void blackboxVirtualWrite(const uint8_t *buffer, uint32_t len);
-bool blackboxVirtualFlush(void);
-bool blackboxVirtualBeginLog(void);
-bool blackboxVirtualEndLog(void);
-void blackboxVirtualClose(void);
-uint32_t blackboxVirtualLogFileNumber(void);

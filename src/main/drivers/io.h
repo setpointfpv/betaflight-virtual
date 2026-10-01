@@ -89,7 +89,7 @@
 #define IOCFG_IPU_25         IO_CONFIG(GPIO_MODE_INPUT  , GPIO_DRIVE_STRENGTH_MODERATE , 0, GPIO_PULL_UP)
 
 
-#elif defined(UNIT_TEST) || defined(SIMULATOR_BUILD)
+#elif defined(UNIT_TEST) || defined(SIMULATOR_BUILD) || defined(VIRTUAL_BOARD)
 
 #define IOCFG_OUT_PP         0
 #define IOCFG_OUT_OD         0
