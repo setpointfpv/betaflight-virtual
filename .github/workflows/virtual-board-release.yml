@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to build, e.g. 2025.12.5-virtual.2"
+        description: "Tag to build, e.g. 2025.12.5-virtual.2 or 4.5.2-virtual.1"
         required: true
 
 permissions:
@@ -27,13 +27,14 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
         run: |
-          [[ "$TAG" =~ ^[0-9]{4}\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)*-virtual(\.[0-9]+)?$ ]] \
+          [[ "$TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)*-virtual(\.[0-9]+)?$ ]] \
             || { echo "::error::$TAG isn't a <release>-virtual.<n> tag"; exit 1; }
 
       - uses: actions/checkout@v4
         with:
           ref: refs/tags/${{ inputs.tag }}
 
+      # Each release's own compiler: GCC 10.3 for 4.5, 13.3 from 2025.12.
       - name: Toolchain
         run: make arm_sdk_install
 
