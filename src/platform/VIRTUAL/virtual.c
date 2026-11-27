@@ -229,6 +229,15 @@ static uint32_t lastAccSeq;
 static void virtualGyroInit(gyroDev_t *gyro)
 {
     virtualGyroDev = gyro;
+    // The host posts samples as fast as the gyro of the flight it replays
+    // ran: 3.2 kHz for a BMI270, say. The loop's timing follows from this
+    // rate, so the firmware runs as that flight's did. A host that doesn't
+    // say reads 0, and the board's own rate stands.
+    const uint32_t rate = MBX_REG(MBX_GYRO_RATE_HZ);
+    if (rate >= 500 && rate <= 32000) {
+        gyro->gyroSampleRateHz = (uint16_t)rate;
+    }
+    MBX_REG(MBX_GYRO_RATE_USED) = gyro->gyroSampleRateHz;
 }
 
 static bool virtualGyroRead(gyroDev_t *gyro)
