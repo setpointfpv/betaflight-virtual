@@ -47,6 +47,7 @@
 #define MBX_PUTC                0x024   // WO  debug console, one character
 #define MBX_RESET               0x028   // WO  firmware asks the host for a reset
 #define MBX_FAULT               0x02C   // WO  firmware reports a fault
+#define MBX_GYRO_RATE_USED      0x030   // WO  gyro sample rate the firmware runs at, Hz
 
 #define MBX_GYRO_X              0x040   // RO  int16 sensor counts, 16.4 per deg/s
 #define MBX_GYRO_Y              0x044
@@ -55,6 +56,7 @@
 #define MBX_ACC_Y               0x050
 #define MBX_ACC_Z               0x054
 #define MBX_SENSOR_SEQ          0x058   // RO  changes when a new sample is posted
+#define MBX_GYRO_RATE_HZ        0x05C   // RO  rate the host posts samples at, Hz; 0 leaves the board's own
 
 #define MBX_RC_COUNT            0x060   // RO  channels in the current frame
 #define MBX_RC_SEQ              0x064   // RO  changes when a new frame is posted
