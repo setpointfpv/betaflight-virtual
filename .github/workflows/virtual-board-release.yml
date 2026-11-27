@@ -40,10 +40,11 @@ jobs:
 
       # 2025.12's make won't start without Betaflight's board-config
       # repository in src/config, though a TARGET build like this one reads
-      # none of it; 2026.6 only asks when a CONFIG is built. An empty
-      # directory is all the check looks for.
+      # none of it, and an empty directory is all the check looks for. 2026.6
+      # fetches the submodule itself and refuses a directory that isn't
+      # empty, so it's left alone there.
       - name: Board configs
-        run: mkdir -p src/config/configs
+        run: grep -q AUTOHYDRATE_SUBMODULES Makefile || mkdir -p src/config/configs
 
       - name: Build
         run: make VIRTUAL_M4
