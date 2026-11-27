@@ -52,7 +52,8 @@ typedef void* ADC_TypeDef;
 // Kept across a reset, like backup RAM: holds the config storage.
 #define PERSISTENT          __attribute__ ((section(".persistent_data"), aligned(4)))
 
-// As an F4/F7/H7: an 8 kHz gyro and PID loop by default.
+// As an F4/F7/H7: an 8 kHz gyro and PID loop by default. The host may set
+// another gyro rate (GYRO_RATE_HZ), and the loop is rescheduled to it.
 #define TASK_GYROPID_DESIRED_PERIOD     125
 #define SCHEDULER_DELAY_LIMIT           10
 
